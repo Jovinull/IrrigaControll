@@ -1,0 +1,78 @@
+# .gitignore para Arduino
+
+# Arquivos gerados pelo Arduino IDE
+*.ino.*
+*.elf
+*.bin
+*.hex
+*.eep
+*.map
+*.a
+*.d
+*.o
+
+# Pastas temporárias
+/libraries
+/build
+/temp
+/*.log
+
+# .gitignore para Python
+
+# Byte-compiled / optimizado / arquivos PyInstaller
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribuição / pacotes de instalação
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Arquivos de log
+*.log
+
+# Arquivos gerados pelo sistema
+.DS_Store
+*.swp
+*.swo
+*.swn
+*.sublime-project
+*.sublime-workspace
+.idea/
+*.iml
+
+# Arquivos de configuração
+*.cfg
+*.ini
+*.toml
+
+# Testa pasta de saída
+/.tox/
+.nox/
+.coverage
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Diretório de perfil IPython
+/profile_default/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyInstaller
+# A pasta gerada pode conter arquivos confidenciais
+/build/
+/dist/
+
+# Em caso de Docker
+*.tar
+*.tar.gz
+
+# Arquivos do VS Code
+.vscode/

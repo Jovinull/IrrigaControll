@@ -1,0 +1,109 @@
+/* Estilos específicos para a página Equipe */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+}
+
+.nav {
+    text-align: center;
+}
+
+.nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.nav ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.section {
+    margin-top: 40px;
+}
+
+.section h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.category-title {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 24px;
+}
+
+.team-members {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.team-member {
+    text-align: center;
+    margin-bottom: 40px;
+    width: 200px; /* Largura do bloco de membro */
+}
+
+.team-member img {
+    width: 150px; /* Tamanho da imagem */
+    height: 150px;
+    object-fit: cover; /* Ajusta a imagem dentro do círculo */
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 3px solid #fff; /* Adiciona borda branca */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.team-member p {
+    font-size: 16px; /* Tamanho do nome */
+    margin: 0;
+}
+
+/* Centraliza a imagem do meio */
+.team-members .team-member:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estilo do rodapé */
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px 0;
+    background-color: #333;
+    color: #fff;
+}
+
+.footer p {
+    margin: 0;
+}
+
+.footer img {
+    max-width: 100px;
+    margin-top: 10px;
+}
