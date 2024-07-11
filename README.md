@@ -1,15 +1,20 @@
+Aqui está um exemplo de um README para seu projeto:
+
+```markdown
 # Sistema de Irrigação Automática com ESP32 e Dashboard Flask
 
 Este projeto implementa um sistema de irrigação automática utilizando um ESP32 para monitorar a umidade do solo e controlar um relé, além de exibir os dados coletados em um dashboard desenvolvido com Flask.
 
 ## Sumário
 
-- [Sistema de Irrigação Automática com ESP32 e Dashboard Flask](#sistema-de-irrigação-automática-com-esp32-e-dashboard-flask)
-  - [Sumário](#sumário)
-  - [Introdução](#introdução)
-  - [Componentes Utilizados](#componentes-utilizados)
-  - [Configuração do ESP32](#configuração-do-esp32)
-    - [Código do ESP32](#código-do-esp32)
+- [Introdução](#introdução)
+- [Componentes Utilizados](#componentes-utilizados)
+- [Configuração do ESP32](#configuração-do-esp32)
+- [Configuração do Dashboard Flask](#configuração-do-dashboard-flask)
+- [Execução do Projeto](#execução-do-projeto)
+- [Estrutura de Arquivos](#estrutura-de-arquivos)
+- [Equipe](#equipe)
+- [Licença](#licença)
 
 ## Introdução
 
@@ -137,3 +142,104 @@ void loop() {
         }
     }
 }
+```
+
+## Configuração do Dashboard Flask
+
+O dashboard Flask exibe os dados coletados pelo ESP32 em uma interface web. Ele inclui várias rotas para renderizar páginas HTML e fornecer dados JSON.
+
+### Código do Flask
+
+```python
+from flask import Flask, render_template, jsonify
+from flask_cors import CORS
+import requests
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/data')
+def get_sensor_data():
+    esp32_ip = 'http://192.168.186.3/data'
+    try:
+        response = requests.get(esp32_ip)
+        data = response.json()
+        return jsonify(data)
+    except Exception as e:
+        print(f"Erro na requisição para o ESP32: {e}")
+        return jsonify({'error': 'Erro ao acessar o ESP32'}), 500
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('index.html')
+
+@app.route('/sobre')
+def sobre():
+    return render_template('sobre.html')
+
+@app.route('/equipe')
+def equipe():
+    return render_template('equipe.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+### Estrutura de Arquivos
+
+- `app.py`: Código principal do servidor Flask.
+- `templates/`
+  - `index.html`: Página principal do dashboard.
+  - `sobre.html`: Página de informações sobre o projeto.
+  - `equipe.html`: Página com informações sobre a equipe.
+- `static/`
+  - `style.css`: Estilos para o dashboard.
+  - `sobre.css`: Estilos para a página sobre.
+  - `equipe.css`: Estilos para a página da equipe.
+  - `script.js`: Script para atualizar os dados dos sensores.
+
+## Execução do Projeto
+
+### Executando o Código do ESP32
+
+1. Carregue o código do ESP32 usando o Arduino IDE.
+2. Certifique-se de que o ESP32 está conectado à rede WiFi correta.
+
+### Executando o Dashboard Flask
+
+1. Instale as dependências necessárias:
+    ```sh
+    pip install flask flask-cors requests
+    ```
+2. Execute o servidor Flask:
+    ```sh
+    python app.py
+    ```
+
+3. Acesse o dashboard no navegador:
+    ```
+    http://127.0.0.1:5000
+    ```
+
+## Equipe
+
+- **Felipe Jovino Dos Santos**
+- **Gilberto Bispo Dos Santos Neto**
+- **Luiz Eduardo Andrade De Oliveira**
+- **Paulo Arthur Pereira Neri**
+
+### Professores
+
+- **Stephanie Kamarry Alves de Sousa**
+- **Fábio Luiz de Sá Prudente**
+- **Catuxe Varjão De Oliveira**
+- **Phillipe Cardoso Santos**
+
+## Licença
+
+Este projeto é licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+```
