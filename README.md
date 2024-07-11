@@ -1,6 +1,3 @@
-Aqui está um exemplo de um README para seu projeto:
-
-```markdown
 # Sistema de Irrigação Automática com ESP32 e Dashboard Flask
 
 Este projeto implementa um sistema de irrigação automática utilizando um ESP32 para monitorar a umidade do solo e controlar um relé, além de exibir os dados coletados em um dashboard desenvolvido com Flask.
@@ -242,4 +239,3 @@ if __name__ == '__main__':
 ## Licença
 
 Este projeto é licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-```
