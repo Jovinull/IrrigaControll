@@ -29,162 +29,55 @@ O projeto visa criar um sistema de irrigação automática que otimiza o uso da 
 ## Configuração do ESP32
 
 O código do ESP32 está configurado para:
-- Ler a umidade e temperatura do ar usando o DHT22.
-- Ler a umidade do solo usando um sensor de umidade.
-- Controlar um relé baseado na leitura da umidade do solo.
-- Expor uma API HTTP para fornecer os dados coletados.
 
-### Código do ESP32
-
-```cpp
-#include <WiFi.h>
-#include <WebServer.h>
-#include <DHT.h>
-
-// Definições do DHT
-#define DHTPIN 4
-#define DHTTYPE DHT22
-#define relePin 5
-
-DHT dht(DHTPIN, DHTTYPE);
-
-// Definições do sensor de umidade do solo
-const int soilMoisturePin = 34;
-bool irrigar = false;
-
-// Credenciais WiFi
-const char* ssid = "p a";
-const char* password = "fvea2556";
-
-// Cria uma instância do servidor
-WebServer server(80);
-
-// Variáveis para armazenar os valores dos sensores
-float humidity = 0.0;
-float temperature = 0.0;
-int soilMoisture = 0;
-
-// Intervalo de tempo entre leituras
-unsigned long previousMillis = 0;
-const long interval = 2000;
-
-// Função para lidar com a rota /data
-void handleData() {
-    String json = "{";
-    json += "\"humidity\":" + String(humidity) + ",";
-    json += "\"temperature\":" + String(temperature) + ",";
-    json += "\"soilMoisture\":" + String(soilMoisture);
-    json += "}";
-    server.send(200, "application/json", json);
-}
-
-void setup() {
-    Serial.begin(115200);
-    dht.begin();
-    pinMode(soilMoisturePin, INPUT);
-    pinMode(relePin, OUTPUT);
-
-    digitalWrite(relePin, HIGH);
-
-    // Conecta ao WiFi
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.println("Conectando ao WiFi...");
-    }
-    Serial.println("Conectado ao WiFi");
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
-
-    // Define a rota /data
-    server.on("/data", handleData);
-
-    // Inicia o servidor
-    server.begin();
-}
-
-void loop() {
-    server.handleClient();
-
-    unsigned long currentMillis = millis();
-    if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
-
-        // Lê os valores dos sensores
-        humidity = dht.readHumidity();
-        temperature = dht.readTemperature();
-        soilMoisture = map(analogRead(soilMoisturePin), 0, 4095, 0, 100);
-
-        // Verifica se a leitura dos sensores falhou
-        if (isnan(humidity) || isnan(temperature)) {
-            Serial.println("Falha ao ler o sensor DHT!");
-        } else {
-            Serial.print("Umidade do ar (%): ");
-            Serial.print(humidity);
-            Serial.print(" | Temperatura (C): ");
-            Serial.print(temperature);
-            Serial.print(" | Umidade do solo (%): ");
-            Serial.println(100 - soilMoisture);
-        }
-
-        irrigar = digitalRead(soilMoisturePin);
-
-        if(soilMoisture <= 50) {
-          digitalWrite(relePin,HIGH);
-          Serial.println("LOW");
-        }
-        else {
-          digitalWrite(relePin, LOW);
-          Serial.println("HIGH");
-        }
-    }
-}
-```
+1. **Ler a umidade e temperatura do ar**: Utilizando o sensor DHT22, o ESP32 coleta dados de umidade e temperatura do ambiente.
+2. **Ler a umidade do solo**: Utilizando um sensor de umidade do solo, o ESP32 monitora a umidade da terra.
+3. **Controlar um relé**: Com base na leitura da umidade do solo, o ESP32 ativa ou desativa um relé para controlar a irrigação.
+4. **Expor uma API HTTP**: O ESP32 possui um servidor web embutido que fornece os dados dos sensores em formato JSON, acessível através de uma rota específica.
 
 ## Configuração do Dashboard Flask
 
 O dashboard Flask exibe os dados coletados pelo ESP32 em uma interface web. Ele inclui várias rotas para renderizar páginas HTML e fornecer dados JSON.
 
-### Código do Flask
+1. **Rota Inicial**: Exibe a página principal do dashboard.
+2. **Rota de Dados**: Fornece os dados dos sensores em formato JSON, obtendo-os do servidor web do ESP32.
+3. **Rotas de Informação**: Inclui páginas sobre o projeto e a equipe.
 
-```python
-from flask import Flask, render_template, jsonify
-from flask_cors import CORS
-import requests
+### Principais Arquivos e Funções
 
-app = Flask(__name__)
-CORS(app)
+- `app.py`: Código principal do servidor Flask, contendo as rotas e lógica para se comunicar com o ESP32.
+- `templates/`: Contém os arquivos HTML para renderizar as páginas web.
+  - `index.html`: Página principal do dashboard, exibe os dados dos sensores.
+  - `sobre.html`: Página com informações sobre o projeto.
+  - `equipe.html`: Página com informações sobre a equipe.
+- `static/`: Contém os arquivos estáticos como CSS e JavaScript.
+  - `style.css`: Estilos para o dashboard.
+  - `sobre.css`: Estilos para a página sobre.
+  - `equipe.css`: Estilos para a página da equipe.
+  - `script.js`: Script para atualizar os dados dos sensores em tempo real.
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+## Execução do Projeto
 
-@app.route('/data')
-def get_sensor_data():
-    esp32_ip = 'http://192.168.186.3/data'
-    try:
-        response = requests.get(esp32_ip)
-        data = response.json()
-        return jsonify(data)
-    except Exception as e:
-        print(f"Erro na requisição para o ESP32: {e}")
-        return jsonify({'error': 'Erro ao acessar o ESP32'}), 500
+### Executando o Código do ESP32
 
-@app.route('/dashboard')
-def dashboard():
-    return render_template('index.html')
+1. Carregue o código do ESP32 usando o Arduino IDE.
+2. Certifique-se de que o ESP32 está conectado à rede WiFi correta.
+3. O ESP32 iniciará um servidor web local para fornecer os dados dos sensores.
 
-@app.route('/sobre')
-def sobre():
-    return render_template('sobre.html')
+### Executando o Dashboard Flask
 
-@app.route('/equipe')
-def equipe():
-    return render_template('equipe.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
-```
+1. Instale as dependências necessárias:
+    ```sh
+    pip install flask flask-cors requests
+    ```
+2. Execute o servidor Flask:
+    ```sh
+    python app.py
+    ```
+3. Acesse o dashboard no navegador:
+    ```
+    http://127.0.0.1:5000
+    ```
 
 ### Estrutura de Arquivos
 
@@ -198,29 +91,6 @@ if __name__ == '__main__':
   - `sobre.css`: Estilos para a página sobre.
   - `equipe.css`: Estilos para a página da equipe.
   - `script.js`: Script para atualizar os dados dos sensores.
-
-## Execução do Projeto
-
-### Executando o Código do ESP32
-
-1. Carregue o código do ESP32 usando o Arduino IDE.
-2. Certifique-se de que o ESP32 está conectado à rede WiFi correta.
-
-### Executando o Dashboard Flask
-
-1. Instale as dependências necessárias:
-    ```sh
-    pip install flask flask-cors requests
-    ```
-2. Execute o servidor Flask:
-    ```sh
-    python app.py
-    ```
-
-3. Acesse o dashboard no navegador:
-    ```
-    http://127.0.0.1:5000
-    ```
 
 ## Equipe
 
